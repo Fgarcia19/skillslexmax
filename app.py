@@ -1,17 +1,10 @@
-from flask import Flask, request, jsonify
+from flask import request
 from flask_restful import Resource, Api
-from flask_sqlalchemy import SQLAlchemy
-import json
-import os
-from dotenv import load_dotenv
 from flask_swagger_ui import get_swaggerui_blueprint
-
-load_dotenv()
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = f'postgresql://{os.getenv("DATABASE_USER")}:{os.getenv("DATABASE_PASSWORD")}@{os.getenv("DATABASE_HOST")}:{os.getenv("DATABASE_PORT")}/{os.getenv("DATABASE_DB")}'
-db = SQLAlchemy(app)
-
+from models import people, app, db
+from requests import people_post_put_args
 api = Api(app)
+
 
 
 ### swagger specific ###
@@ -27,69 +20,64 @@ SWAGGERUI_BLUEPRINT = get_swaggerui_blueprint(
 app.register_blueprint(SWAGGERUI_BLUEPRINT, url_prefix=SWAGGER_URL)
 ### end swagger specific ###
 
-
-class people(db.Model):
-    id = db.Column(db.Integer,primary_key = True)
-    name = db.Column(db.String(100),nullable=False)
-    lastname = db.Column(db.String(150),nullable=False)
-    email = db.Column(db.String(200),nullable=False)
-    address = db.Column(db.VARCHAR,nullable=True)
-    reference_address = db.Column(db.VARCHAR,nullable=True)
-    phone_number = db.Column(db.String(20),nullable=True)
-
-    def as_dict(self):
-       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
-
-
 class personas(Resource):
     def get(self):
-            all_people = people.query.all()
-            json_allpeople = []
-            for c in all_people:
-                json_allpeople.append(c.as_dict())
-            return json_allpeople
+            try:
+                all_people = people.query.all()
+                json_allpeople = []
+                for c in all_people:
+                    json_allpeople.append(c.as_dict())
+                return json_allpeople
+            except:
+                return { 'Status':'500', 'Message':'Interal Server Error'}
+
     def post(self):
-            data = request.get_json()
-            name = data['name']
-            lastname = data['lastname']
-            email = data['email']
-            address = ""
-            reference_address = ""
-            phone_number = ""
-            if 'address' in data:
-                address = data['address']
-            if 'reference_address' in data:
-                reference_address = data['reference_address']
-            if 'phone_number' in data:
-                phone_number = data['phone_number']
-            new_person = people(name=name,lastname=lastname,email=email,address=address,reference_address=reference_address,phone_number=phone_number)
+        args = people_post_put_args.parse_args()
+        print(args)
+        try:
+            new_person = people(name=args["name"],lastname=args["lastname"],email=args["email"],address=args["address"],reference_address=args["reference_address"],phone_number=args["phone_number"])
             db.session.add(new_person)
             db.session.commit()
             return { 'Status':'200', 'Message':'New user created'}
+        except:
+            return { 'Status':'500', 'Message':'Interal Server Error'}
+      
+            
 
 class persona(Resource):
     def get(self,id):
-        person = people.query.filter_by(id=id).first()
-        return person.as_dict()
+        try:
+            person = people.query.filter_by(id=id).first()
+            return person.as_dict()
+        except:
+            return { 'Status':'500', 'Message':'Interal Server Error'}
+            
+
     def put(self,id):
         person = people.query.filter_by(id=id).first()
-        data = request.get_json()
-        person.name = data['name']
-        person.lastname = data['lastname']
-        person.email = data['email']
-        if 'address' in data:
-            person.address = data['address']
-        if 'reference_address' in data:
-            person.reference_address = data['reference_address']
-        if 'phone_number' in data:
-            person.phone_number = data['phone_number']
-        db.session.commit()
-        return person.as_dict()
+        args = people_post_put_args.parse_args()
+        try:
+            person.name=args["name"]
+            person.lastname=args["lastname"]
+            person.email=args["email"]
+            person.address=args["address"]
+            person.reference_address=args["reference_address"]
+            person.phone_number=args["phone_number"]
+            db.session.commit()
+            return person.as_dict()
+        except:
+            return { 'Status':'500', 'Message':'Interal Server Error'}
+
+
     def delete(self,id):
         person = people.query.filter_by(id=id).first()
-        db.session.delete(person)
-        db.session.commit()
-        return { 'Status':'200', 'Message':'User deleted'}
+        try:
+            db.session.delete(person)
+            db.session.commit()
+            return { 'Status':'200', 'Message':'User deleted'}
+        except:
+            return { 'Status':'500', 'Message':'Interal Server Error'}
+            
 
 
 api.add_resource(personas, '/people')
