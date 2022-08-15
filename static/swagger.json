@@ -1,0 +1,260 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+      "title": "API Lexmax Challenge",
+      "description": "Esta api se desarrollo con el proposito de superar el \"backend challenge\" de Lexmax para el manejo de una tabla de una base de",
+      "version": "1.0.0"
+    },
+    "servers": [
+      {
+        "url": "https://virtserver.swaggerhub.com/Fgarcia19/lexmaxchallenge/1.0.0",
+        "description": "SwaggerHub API Auto Mocking"
+      },
+      {
+        "url": "localhost:5000/people"
+      }
+    ],
+    "tags": [
+      {
+        "name": "people",
+        "description": "Maneja la informacion con la tabla \"people\" de la base de datos."
+      }
+    ],
+    "paths": {
+      "/": {
+        "post": {
+          "tags": [
+            "people"
+          ],
+          "summary": "Inserta una nueva persona a la tabla de la base de datos.",
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BodypeoplePost"
+                }
+              }
+            },
+            "required": true
+          },
+          "responses": {
+            "200": {
+              "description": "La informacion del cliente se guardo correctamente"
+            },
+            "400": {
+              "description": "Los datos enviados son incorrectos o hay datos obligatorios no enviados"
+            },
+            "404": {
+              "description": "No se encontro"
+            },
+            "500": {
+              "description": "Error en servidor"
+            }
+          }
+        }
+      },
+      "/{idPerson}": {
+        "get": {
+          "tags": [
+            "people"
+          ],
+          "summary": "Extraer de la base de datos un persona.",
+          "parameters": [
+            {
+              "name": "idPerson",
+              "in": "path",
+              "description": "Identificador del persona a obtener",
+              "required": true,
+              "style": "simple",
+              "explode": false,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "La informacion del cliente se obtuvo correctamente",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ExitopeopleGet"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Los datos enviados son incorrectos o hay datos obligatorios no enviados"
+            },
+            "404": {
+              "description": "No se encontro"
+            },
+            "500": {
+              "description": "Error en servidor"
+            }
+          }
+        }
+      },
+      "/{idPersonUpdate}": {
+        "put": {
+          "tags": [
+            "people"
+          ],
+          "summary": "Actualiza la informacion de una persona en la base de datos.",
+          "parameters": [
+            {
+              "name": "idPersonUpdate",
+              "in": "path",
+              "description": "Identificador del cliente a obtener",
+              "required": true,
+              "style": "simple",
+              "explode": false,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BodypeoplePost"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Se actualizo correctamente"
+            },
+            "400": {
+              "description": "Los datos enviados son incorrectos o hay datos obligatorios no enviados"
+            },
+            "404": {
+              "description": "No se encontro"
+            },
+            "500": {
+              "description": "Error en servidor"
+            }
+          }
+        }
+      },
+      "/{idPersonDelete}": {
+        "delete": {
+          "tags": [
+            "people"
+          ],
+          "summary": "Elimina logicamente a un cliente.",
+          "parameters": [
+            {
+              "name": "idPersonDelete",
+              "in": "path",
+              "description": "Identificador del cliente a obtener",
+              "required": true,
+              "style": "simple",
+              "explode": false,
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Se elimino correctamente"
+            },
+            "400": {
+              "description": "Los datos enviados son incorrectos o hay datos obligatorios no enviados"
+            },
+            "404": {
+              "description": "No se encontro"
+            },
+            "500": {
+              "description": "Error en servidor"
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "BodypeoplePost": {
+          "required": [
+            "email",
+            "lastname",
+            "name"
+          ],
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Nombre de la persona"
+            },
+            "lastname": {
+              "type": "string",
+              "description": "Apellido de la persona"
+            },
+            "email": {
+              "type": "string",
+              "description": "Correo de la persona"
+            },
+            "address": {
+              "type": "string",
+              "description": "Direccion de la persona"
+            },
+            "reference_address": {
+              "type": "string",
+              "description": "Referencia de la direccion de la persona"
+            },
+            "phone_number": {
+              "type": "string",
+              "description": "Numero de la persona"
+            }
+          }
+        },
+        "ExitopeopleGet": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "description": "ID de la persona"
+            },
+            "name": {
+              "type": "string",
+              "description": "Nombre de la persona"
+            },
+            "lastname": {
+              "type": "string",
+              "description": "Apellido de la persona"
+            },
+            "email": {
+              "type": "string",
+              "description": "Correo de la persona"
+            },
+            "address": {
+              "type": "string",
+              "description": "Direccion de la persona"
+            },
+            "reference_address": {
+              "type": "string",
+              "description": "Referencia de la direccion de la persona"
+            },
+            "phone_number": {
+              "type": "string",
+              "description": "Numero de la persona"
+            }
+          }
+        }
+      },
+      "responses": {
+        "NotFound": {
+          "description": "No se encontro"
+        },
+        "BadRequest": {
+          "description": "Los datos enviados son incorrectos o hay datos obligatorios no enviados"
+        },
+        "ServerError": {
+          "description": "Error en servidor"
+        }
+      }
+    }
+  }
