@@ -21,7 +21,7 @@
       }
     ],
     "paths": {
-      "/": {
+      "/people/": {
         "post": {
           "tags": [
             "people"
@@ -53,7 +53,7 @@
           }
         }
       },
-      "/{idPerson}": {
+      "/people/{idPerson}": {
         "get": {
           "tags": [
             "people"
@@ -95,7 +95,7 @@
           }
         }
       },
-      "/{idPersonUpdate}": {
+      "/people/{idPersonUpdate}": {
         "put": {
           "tags": [
             "people"
@@ -139,7 +139,7 @@
           }
         }
       },
-      "/{idPersonDelete}": {
+      "/people/{idPersonDelete}": {
         "delete": {
           "tags": [
             "people"

@@ -27,9 +27,9 @@ class personas(Resource):
                 json_allpeople = []
                 for c in all_people:
                     json_allpeople.append(c.as_dict())
-                return json_allpeople
+                return json_allpeople, 200
             except:
-                return { 'Status':'500', 'Message':'Interal Server Error'}
+                return { 'Status':'500', 'Message':'Interal Server Error'},500
 
     def post(self):
         args = people_post_put_args.parse_args()
@@ -38,9 +38,9 @@ class personas(Resource):
             new_person = people(name=args["name"],lastname=args["lastname"],email=args["email"],address=args["address"],reference_address=args["reference_address"],phone_number=args["phone_number"])
             db.session.add(new_person)
             db.session.commit()
-            return { 'Status':'200', 'Message':'New user created'}
+            return { 'Status':'200', 'Message':'New user created'},200
         except:
-            return { 'Status':'500', 'Message':'Interal Server Error'}
+            return { 'Status':'500', 'Message':'Interal Server Error'},500
       
             
 
@@ -50,7 +50,7 @@ class persona(Resource):
             person = people.query.filter_by(id=id).first()
             return person.as_dict()
         except:
-            return { 'Status':'500', 'Message':'Interal Server Error'}
+            return { 'Status':'404', 'Message':'Not Found'}, 404
             
 
     def put(self,id):
@@ -66,7 +66,7 @@ class persona(Resource):
             db.session.commit()
             return person.as_dict()
         except:
-            return { 'Status':'500', 'Message':'Interal Server Error'}
+            return { 'Status':'500', 'Message':'Interal Server Error'}, 500
 
 
     def delete(self,id):
@@ -74,17 +74,19 @@ class persona(Resource):
         try:
             db.session.delete(person)
             db.session.commit()
-            return { 'Status':'200', 'Message':'User deleted'}
+            return { 'Status':'200', 'Message':'User deleted'}, 200
         except:
-            return { 'Status':'500', 'Message':'Interal Server Error'}
+            return { 'Status':'500', 'Message':'Interal Server Error'},500
             
 
 
 api.add_resource(personas, '/people')
 api.add_resource(persona, '/people/<int:id>')
 
+import os
 if __name__ == '__main__':
     db.create_all()
+    print('Prueba',os.getenv("DATABASE_URI"))
     app.run(debug = True)
 
 #TODO
